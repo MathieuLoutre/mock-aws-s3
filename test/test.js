@@ -178,17 +178,17 @@ describe('S3', function () {
 		});
 	});
 
-	it('should create a file and have the same content', function (done) {
+	it('should create a file and have the same content in sub dir', function (done) {
 
-		s3.putObject({Key: '/file', Body: fs.readFileSync(__dirname + '/local/file'), Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.putObject({Key: '/punk/file', Body: fs.readFileSync(__dirname + '/local/file'), Bucket: __dirname + '/local/otters'}, function (err, data) {
 			
 			expect(err).to.be.null;
-			expect(fs.existsSync(__dirname + '/local/otters/file')).to.equal(true);
+			expect(fs.existsSync(__dirname + '/local/otters/punk/file')).to.equal(true);
 
-			s3.getObject({Key: '/file', Bucket: __dirname + '/local/otters'}, function (err, data) {
+			s3.getObject({Key: '/punk/file', Bucket: __dirname + '/local/otters'}, function (err, data) {
 				
 				expect(err).to.be.null;
-				expect(data.Key).to.equal('/file');
+				expect(data.Key).to.equal('/punk/file');
 				expect(data.Body.toString()).to.equal("this is a file. That's right.");
 				done();
 			});

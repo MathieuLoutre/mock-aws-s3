@@ -24,7 +24,8 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "underscore": "1.5.2"
+    "underscore": "1.5.2",
+    "fs-extra": "0.6.4"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.2.0",
