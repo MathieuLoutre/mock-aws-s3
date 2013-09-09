@@ -23,6 +23,9 @@
   "engines": {
     "node": ">= 0.8.0"
   },
+  "scripts": {
+    "test": "grunt"
+  },
   "dependencies": {
     "underscore": "1.5.2",
     "fs-extra": "0.6.4"
