@@ -1,6 +1,6 @@
 {
   "name": "mock-aws-s3",
-  "description": "Mock AWS S3",
+  "description": "Mock AWS S3 SDK for Node.js",
   "version": "0.1.0",
   "homepage": "https://github.com/MathieuLoutre/mock-aws-s3",
   "author": {
@@ -36,10 +36,9 @@
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-clean": "~0.5.0"
   },
-  "peerDependencies": {
-    "grunt": "~0.4.0"
-  },
   "keywords": [
-    "gruntplugin"
+    "aws",
+    "s3",
+    "sdk"
   ]
 }
