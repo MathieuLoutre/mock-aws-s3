@@ -16,7 +16,7 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
 			expect(data.Contents[1].Key).to.exist;
-			expect(data.isTruncated).to.equal(false);
+			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
 			done();
 		});
@@ -31,7 +31,7 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
 			expect(data.Contents[1].Key).to.exist;
-			expect(data.isTruncated).to.equal(false);
+			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
 			done();
 		});
@@ -46,7 +46,7 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
 			expect(data.Contents[1].Key).to.exist;
-			expect(data.isTruncated).to.equal(true);
+			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 			done();
 		});
@@ -61,7 +61,7 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
 			expect(data.Contents[1].Key).to.exist;
-			expect(data.isTruncated).to.equal(true);
+			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 
 			marker = data.Marker;
@@ -79,7 +79,7 @@ describe('S3', function () {
 			expect(data.Contents[0].ETag).to.exist;
 			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
 			expect(data.Contents[0].Key).to.exist;
-			expect(data.isTruncated).to.equal(true);
+			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 			
 			marker = data.Marker;
@@ -97,7 +97,7 @@ describe('S3', function () {
 			expect(data.Contents[0].ETag).to.exist;
 			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
 			expect(data.Contents[0].Key).to.exist;
-			expect(data.isTruncated).to.equal(false);
+			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
 			
 			marker = data.Marker;
@@ -145,7 +145,7 @@ describe('S3', function () {
 				expect(data.Contents[0].ETag).to.exist;
 				expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
 				expect(data.Contents[0].Key).to.exist;
-				expect(data.isTruncated).to.equal(false);
+				expect(data.IsTruncated).to.equal(false);
 				expect(data.Marker).to.not.exist;
 				done();
 			});
