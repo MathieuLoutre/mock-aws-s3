@@ -14,7 +14,7 @@ describe('S3', function () {
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(560);
 			expect(data.Contents[1].ETag).to.exist;
-			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
@@ -29,7 +29,7 @@ describe('S3', function () {
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(912);
 			expect(data.Contents[1].ETag).to.exist;
-			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
@@ -44,7 +44,7 @@ describe('S3', function () {
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
 			expect(data.Contents[1].ETag).to.exist;
-			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
@@ -59,7 +59,7 @@ describe('S3', function () {
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
 			expect(data.Contents[1].ETag).to.exist;
-			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
@@ -77,7 +77,7 @@ describe('S3', function () {
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
 			expect(data.Contents[0].ETag).to.exist;
-			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[0].Key).to.exist;
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
@@ -95,7 +95,7 @@ describe('S3', function () {
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(947);
 			expect(data.Contents[0].ETag).to.exist;
-			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[0].Key).to.exist;
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
@@ -106,7 +106,54 @@ describe('S3', function () {
 		});
 	});
 
-	it('should delete the specified files', function (done) {
+	it('should delete the specified file', function (done) {
+
+		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy.txt')).to.equal(true);
+
+		var to_delete = {
+			Key: '/sea/yo copy.txt',
+			Bucket: __dirname + '/local/otters'
+		};
+
+		s3.deleteObject(to_delete, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data).to.exist;
+			expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy.txt')).to.equal(false);
+
+			s3.listObjects({Prefix: 'sea', Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+				expect(err).to.equal(null);
+				expect(data.Contents.length).to.equal(559);
+				expect(data.Contents[0].ETag).to.exist;
+				expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+				expect(data.Contents[0].Key).to.exist;
+				expect(data.IsTruncated).to.equal(false);
+				expect(data.Marker).to.not.exist;
+				done();
+			});
+		});
+	});
+    
+    it('should fail to delete a file that does not exist', function (done) {
+
+		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 20000.txt')).to.equal(false);
+
+		var to_delete = {
+			Key: '/sea/yo copy 20000.txt',
+			Bucket: __dirname + '/local/otters'
+		};
+
+		s3.deleteObject(to_delete, function (err, data) {
+
+			expect(err).to.not.null;
+			expect(data).to.null;
+
+			done();
+		});
+	});
+
+    it('should delete the specified files', function (done) {
 
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 2.txt')).to.equal(true);
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 3.txt')).to.equal(true);
@@ -141,9 +188,9 @@ describe('S3', function () {
 			s3.listObjects({Prefix: 'sea', Bucket: __dirname + '/local/otters'}, function (err, data) {
 
 				expect(err).to.equal(null);
-				expect(data.Contents.length).to.equal(556);
+				expect(data.Contents.length).to.equal(555);
 				expect(data.Contents[0].ETag).to.exist;
-				expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+				expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 				expect(data.Contents[0].Key).to.exist;
 				expect(data.IsTruncated).to.equal(false);
 				expect(data.Marker).to.not.exist;
@@ -196,7 +243,7 @@ describe('S3', function () {
 		s3.getObject({Key: 'sea/yo copy 10.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
 
 			expect(err).to.be.null;
-			expect(data.ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"')
+			expect(data.ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Key).to.equal('sea/yo copy 10.txt');
 			done();
 		});
@@ -207,7 +254,7 @@ describe('S3', function () {
 		s3.getObject({Key: 'animal.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
 			
 			expect(err).to.be.null;
-			expect(data.ETag).to.equal('"485737f20ae6c0c3e51f68dd9b93b4e9"')
+			expect(data.ETag).to.equal('"485737f20ae6c0c3e51f68dd9b93b4e9"');
 			expect(data.Key).to.equal('animal.txt');
 			expect(data.Body.toString()).to.equal("My favourite animal");
 			done();
