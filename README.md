@@ -7,6 +7,7 @@ At the time of writing (although the tests pass), it may not be suitable for gen
 Available:
 - listObjects
 - deleteObjects
+- deleteObject
 - getObject
 - putObject
 
