@@ -81,7 +81,7 @@ describe('S3', function () {
 			expect(data.Contents[0].Key).to.exist;
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
-			
+
 			marker = data.Marker;
 
 			done();
@@ -99,7 +99,7 @@ describe('S3', function () {
 			expect(data.Contents[0].Key).to.exist;
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
-			
+
 			marker = data.Marker;
 
 			done();
@@ -134,7 +134,7 @@ describe('S3', function () {
 			});
 		});
 	});
-    
+
     it('should fail to delete a file that does not exist', function (done) {
 
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 20000.txt')).to.equal(false);
@@ -161,9 +161,9 @@ describe('S3', function () {
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 5.txt')).to.equal(true);
 
 		var keys = [
-			{Key: '/sea/yo copy 2.txt'}, 
-			{Key: '/sea/yo copy 3.txt'}, 
-			{Key: '/sea/yo copy 4.txt'}, 
+			{Key: '/sea/yo copy 2.txt'},
+			{Key: '/sea/yo copy 3.txt'},
+			{Key: '/sea/yo copy 4.txt'},
 			{Key: '/sea/yo copy 5.txt'}
 		];
 
@@ -207,9 +207,9 @@ describe('S3', function () {
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 8.txt')).to.equal(true);
 
 		var keys = [
-			{Key: 'sea/yo copy 20000.txt'}, 
-			{Key: 'sea/yo copy 6.txt'}, 
-			{Key: 'sea/yo copy 7.txt'}, 
+			{Key: 'sea/yo copy 20000.txt'},
+			{Key: 'sea/yo copy 6.txt'},
+			{Key: 'sea/yo copy 7.txt'},
 			{Key: 'sea/yo copy 8.txt'}
 		];
 
@@ -252,7 +252,7 @@ describe('S3', function () {
 	it('should get a file and its content', function (done) {
 
 		s3.getObject({Key: 'animal.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
-			
+
 			expect(err).to.be.null;
 			expect(data.ETag).to.equal('"485737f20ae6c0c3e51f68dd9b93b4e9"');
 			expect(data.Key).to.equal('animal.txt');
@@ -264,18 +264,34 @@ describe('S3', function () {
 	it('should create a file and have the same content in sub dir', function (done) {
 
 		s3.putObject({Key: 'punk/file', Body: fs.readFileSync(__dirname + '/local/file'), Bucket: __dirname + '/local/otters'}, function (err, data) {
-			
+
 			expect(err).to.be.null;
 			expect(fs.existsSync(__dirname + '/local/otters/punk/file')).to.equal(true);
 
 			s3.getObject({Key: 'punk/file', Bucket: __dirname + '/local/otters'}, function (err, data) {
-				
+
 				expect(err).to.be.null;
 				expect(data.Key).to.equal('punk/file');
 				expect(data.Body.toString()).to.equal("this is a file. That's right.");
 				done();
 			});
 		});
+	});
+
+	it('should be able to put a string', function(done) {
+
+		s3.putObject({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}', Bucket: __dirname + '/local/otters'}, function(err, data) {
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/otters/animal.json')).to.equal(true);
+
+			s3.getObject({Key: 'animal.json', Bucket: __dirname + '/local/otters'}, function(err, data) {
+
+				expect(err).to.be.null;
+				expect(data.Key).to.equal('animal.json');
+				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true}');
+				done();
+			})
+		})
 	});
 
 });
