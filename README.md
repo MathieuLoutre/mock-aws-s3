@@ -17,6 +17,7 @@ It uses a directory to mock a bucket and its content.
 If you'd like to see some more features or you have some suggestions, feel free to use the issues or submit a pull request.
 
 ## Release History
+* 2015-03-03   v0.2.5   Allow string and fix tests by @lbud
 * 2015-02-05   v0.2.4   Fix url encoding for copy by @ahageali
 * 2015-01-22   v0.2.3   Support for copyObject
 * 2014-02-02   v0.2.1   Support for deleteObject
