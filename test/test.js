@@ -147,7 +147,7 @@ describe('S3', function () {
 		s3.deleteObject(to_delete, function (err, data) {
 
 			expect(err).to.not.null;
-			expect(data).to.null;
+			expect(data).to.not.exist;
 
 			done();
 		});
