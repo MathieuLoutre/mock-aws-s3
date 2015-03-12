@@ -52,6 +52,21 @@ describe('S3', function () {
 		});
 	});
 
+	it('should list files starting a marker with a partial filename', function (done) {
+
+		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters',  Marker: 'mix/yay copy 10' }, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[0].ETag).to.exist;
+			expect(data.Contents[0].Key).to.equal('mix/yay copy 10.txt');
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.Marker).to.exist;
+			done();
+		});
+	});
+
 	it('should list all files in bucket (more than 1000)', function (done) {
 
 		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters'}, function (err, data) {
@@ -253,10 +268,12 @@ describe('S3', function () {
 
 		s3.getObject({Key: 'animal.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
 
+			var expectedBody = "My favourite animal";
 			expect(err).to.be.null;
 			expect(data.ETag).to.equal('"485737f20ae6c0c3e51f68dd9b93b4e9"');
 			expect(data.Key).to.equal('animal.txt');
-			expect(data.Body.toString()).to.equal("My favourite animal");
+			expect(data.Body.toString()).to.equal(expectedBody);
+			expect(data.ContentLength).to.equal(expectedBody.length);
 			done();
 		});
 	});
