@@ -17,6 +17,7 @@ It uses a directory to mock a bucket and its content.
 If you'd like to see some more features or you have some suggestions, feel free to use the issues or submit a pull request.
 
 ## Release History
+* 2015-03-15   v0.2.7   Mock out AWS' config submodule by @necaris
 * 2015-03-13   v0.2.6   Partial match support and ContentLength by @mick
 * 2015-03-03   v0.2.5   Allow string and fix tests by @lbud
 * 2015-02-05   v0.2.4   Fix url encoding for copy by @ahageali
