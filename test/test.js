@@ -16,6 +16,9 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('sea/');
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
 			done();
@@ -31,6 +34,9 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
 			done();
@@ -46,6 +52,9 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 			done();
@@ -61,6 +70,9 @@ describe('S3', function () {
 			expect(data.Contents[0].ETag).to.exist;
 			expect(data.Contents[0].Key).to.equal('mix/yay copy 10.txt');
 			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 			done();
@@ -76,6 +88,11 @@ describe('S3', function () {
 			expect(data.Contents[1].ETag).to.exist;
 			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 
@@ -94,6 +111,11 @@ describe('S3', function () {
 			expect(data.Contents[0].ETag).to.exist;
 			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[0].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('river/');
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 
@@ -112,6 +134,11 @@ describe('S3', function () {
 			expect(data.Contents[0].ETag).to.exist;
 			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[0].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('sea/');
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
 
@@ -143,6 +170,9 @@ describe('S3', function () {
 				expect(data.Contents[0].ETag).to.exist;
 				expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 				expect(data.Contents[0].Key).to.exist;
+				expect(data.CommonPrefixes.length).to.equal(1);
+				expect(data.CommonPrefixes[0].Prefix).to.exist;
+				expect(data.CommonPrefixes[0].Prefix).to.equal('sea/');
 				expect(data.IsTruncated).to.equal(false);
 				expect(data.Marker).to.not.exist;
 				done();
@@ -207,6 +237,9 @@ describe('S3', function () {
 				expect(data.Contents[0].ETag).to.exist;
 				expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 				expect(data.Contents[0].Key).to.exist;
+				expect(data.CommonPrefixes.length).to.equal(1);
+				expect(data.CommonPrefixes[0].Prefix).to.exist;
+				expect(data.CommonPrefixes[0].Prefix).to.equal('sea/');
 				expect(data.IsTruncated).to.equal(false);
 				expect(data.Marker).to.not.exist;
 				done();
