@@ -1,7 +1,7 @@
 {
   "name": "mock-aws-s3",
   "description": "Mock AWS S3 SDK for Node.js",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "homepage": "https://github.com/MathieuLoutre/mock-aws-s3",
   "author": {
     "name": "Mathieu Triay",
