@@ -286,6 +286,27 @@ describe('S3', function () {
 		});
 	});
 
+	it('should get the metadata about a file', function (done) {
+
+		s3.headObject({Key: 'animal.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+			expect(err).to.be.null;
+			expect(data.ETag).to.equal('"485737f20ae6c0c3e51f68dd9b93b4e9"');
+			expect(data.ContentLength).to.equal(19);
+			done();
+		});
+	});
+
+	it('should include a 404 statusCode for the metadata of a non-existant file', function (done) {
+
+		s3.headObject({Key: 'doesnt-exist.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+			expect(err).to.not.be.null;
+			expect(err.statusCode).to.equal(404);
+			done();
+		});
+	});
+
 	it('should get a file', function (done) {
 
 		s3.getObject({Key: 'sea/yo copy 10.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
