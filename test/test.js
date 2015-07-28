@@ -297,6 +297,16 @@ describe('S3', function () {
 		});
 	});
 
+	it('should include a 404 statusCode for the metadata of a non-existant file', function (done) {
+
+		s3.headObject({Key: 'doesnt-exist.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+			expect(err).to.not.be.null;
+			expect(err.statusCode).to.equal(404);
+			done();
+		});
+	});
+
 	it('should get a file', function (done) {
 
 		s3.getObject({Key: 'sea/yo copy 10.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
