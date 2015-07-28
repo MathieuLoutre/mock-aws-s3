@@ -9,6 +9,7 @@ Available:
 - deleteObjects
 - deleteObject
 - getObject
+- headObject
 - putObject
 - copyObject
 
