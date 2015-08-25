@@ -365,6 +365,22 @@ describe('S3', function () {
 		})
 	});
 
+	it('should be able to upload a string', function(done) {
+
+		s3.upload({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true,"upload":true}', Bucket: __dirname + '/local/otters'}, function(err, data) {
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/otters/animal.json')).to.equal(true);
+
+			s3.getObject({Key: 'animal.json', Bucket: __dirname + '/local/otters'}, function(err, data) {
+
+				expect(err).to.be.null;
+				expect(data.Key).to.equal('animal.json');
+				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true,"upload":true}');
+				done();
+			})
+		})
+	});
+
 	it('should accept "configuration"', function() {
 		expect(s3.config).to.be.ok;
 		expect(s3.config.update).to.be.a('function');
