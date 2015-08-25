@@ -12,6 +12,7 @@ Available:
 - headObject
 - putObject
 - copyObject
+- upload
 
 It uses a directory to mock a bucket and its content.
 
