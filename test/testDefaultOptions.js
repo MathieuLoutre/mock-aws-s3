@@ -373,3 +373,42 @@ describe('S3 with defaultOptions', function () {
 	});
 
 });
+
+
+describe('Multiple S3 with defaultOptions', function () {
+
+	var s3_1 = AWS.S3({
+		Bucket: __dirname + '/local/concurrent1'
+	});
+	var s3_2 = AWS.S3({
+		Bucket: __dirname + '/local/concurrent2'
+	});
+
+	it('should use different defaults', function(done) {
+
+		s3_1.putObject({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/concurrent1/animal.json')).to.equal(true);
+
+			s3_2.putObject({Key: 'animal.json', Body: '{"is dog":true,"name":"snoopy","stringified object?":true}'}, function(err, data) {
+				expect(err).to.be.null;
+				expect(fs.existsSync(__dirname + '/local/concurrent2/animal.json')).to.equal(true);
+
+				s3_1.getObject({Key: 'animal.json'}, function(err, data) {
+					expect(err).to.be.null;
+					expect(data.Key).to.equal('animal.json');
+					expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true}');
+
+					s3_2.getObject({Key: 'animal.json'}, function(err, data) {
+						expect(err).to.be.null;
+						expect(data.Key).to.equal('animal.json');
+						expect(data.Body.toString()).to.equal('{"is dog":true,"name":"snoopy","stringified object?":true}');
+						done();
+					});
+				});
+			});
+		})
+	});
+
+});
+
