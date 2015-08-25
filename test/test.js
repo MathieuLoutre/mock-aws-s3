@@ -180,7 +180,7 @@ describe('S3', function () {
 		});
 	});
 
-    it('should fail to delete a file that does not exist', function (done) {
+  it('should not error when deleting a file that does not exist', function (done) {
 
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 20000.txt')).to.equal(false);
 
@@ -191,8 +191,8 @@ describe('S3', function () {
 
 		s3.deleteObject(to_delete, function (err, data) {
 
-			expect(err).to.not.null;
-			expect(data).to.not.exist;
+			expect(err).to.null;
+			expect(data).to.exist;
 
 			done();
 		});

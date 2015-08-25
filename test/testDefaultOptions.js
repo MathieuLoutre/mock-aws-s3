@@ -193,8 +193,8 @@ describe('S3 with defaultOptions', function () {
 
 		s3.deleteObject(to_delete, function (err, data) {
 
-			expect(err).to.not.null;
-			expect(data).to.not.exist;
+			expect(err).to.null;
+			expect(data).to.exist;
 
 			done();
 		});
