@@ -12,6 +12,7 @@ Available:
 - headObject
 - putObject
 - copyObject
+- upload
 
 It uses a directory to mock a bucket and its content.
 
@@ -30,3 +31,17 @@ If you'd like to see some more features or you have some suggestions, feel free 
 * 2013-10-24   v0.1.2   Fix isTruncated typo
 * 2013-10-09   v0.1.1   Add LastModified to listObject
 * 2013-08-09   v0.1.0   First release
+
+## Example
+
+```js
+var AWSMock = require('mock-aws-s3');
+var s3 = AWSMock.S3({
+	Bucket: '/tmp/example'
+});
+s3.putObject({Key: 'sea/animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
+	s3.listObjects({Prefix: 'sea'}, function (err, data) {
+		console.log(data);
+	});
+});
+```

@@ -2,14 +2,16 @@ var expect = require('chai').expect;
 var AWS = require('../');
 var fs = require('fs');
 
-describe('S3', function () {
+describe('S3 with defaultOptions', function () {
 
-	var s3 = AWS.S3();
+	var s3 = AWS.S3({
+		Bucket: __dirname + '/local/otters'
+	});
 	var marker = null;
 
 	it('should list files in bucket with less than 1000 objects and use Prefix to filter', function (done) {
 
-		s3.listObjects({Prefix: 'sea/', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: 'sea/'}, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(560);
@@ -27,7 +29,7 @@ describe('S3', function () {
 
 	it('should list files in bucket with less than 1000 objects and use Prefix to filter - 2', function (done) {
 
-		s3.listObjects({Prefix: 'river/', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: 'river/'}, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(912);
@@ -45,7 +47,7 @@ describe('S3', function () {
 
 	it('should list files in bucket with more than 1000 objects and use Prefix to filter - 3', function (done) {
 
-		s3.listObjects({Prefix: 'mix/', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: 'mix/'}, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
@@ -63,7 +65,7 @@ describe('S3', function () {
 
 	it('should list files starting a marker with a partial filename', function (done) {
 
-		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters',  Marker: 'mix/yay copy 10' }, function (err, data) {
+		s3.listObjects({Prefix: '',  Marker: 'mix/yay copy 10' }, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
@@ -81,7 +83,7 @@ describe('S3', function () {
 
 	it('should list all files in bucket (more than 1000)', function (done) {
 
-		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: ''}, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
@@ -104,7 +106,7 @@ describe('S3', function () {
 
 	it('should list more files in bucket (more than 1000) with marker', function (done) {
 
-		s3.listObjects({Prefix: '', Marker: marker, Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: '', Marker: marker}, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
@@ -127,7 +129,7 @@ describe('S3', function () {
 
 	it('should list more files in bucket (more than 1000) with marker - 2', function (done) {
 
-		s3.listObjects({Prefix: '', Marker: marker, Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: '', Marker: marker}, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(947);
@@ -154,7 +156,7 @@ describe('S3', function () {
 
 		var to_delete = {
 			Key: '/sea/yo copy.txt',
-			Bucket: __dirname + '/local/otters'
+
 		};
 
 		s3.deleteObject(to_delete, function (err, data) {
@@ -163,7 +165,7 @@ describe('S3', function () {
 			expect(data).to.exist;
 			expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy.txt')).to.equal(false);
 
-			s3.listObjects({Prefix: 'sea', Bucket: __dirname + '/local/otters'}, function (err, data) {
+			s3.listObjects({Prefix: 'sea'}, function (err, data) {
 
 				expect(err).to.equal(null);
 				expect(data.Contents.length).to.equal(559);
@@ -180,13 +182,13 @@ describe('S3', function () {
 		});
 	});
 
-  it('should not error when deleting a file that does not exist', function (done) {
+    it('should fail to delete a file that does not exist', function (done) {
 
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 20000.txt')).to.equal(false);
 
 		var to_delete = {
 			Key: '/sea/yo copy 20000.txt',
-			Bucket: __dirname + '/local/otters'
+
 		};
 
 		s3.deleteObject(to_delete, function (err, data) {
@@ -216,7 +218,7 @@ describe('S3', function () {
 			Delete: {
 				Objects: keys
 			},
-			Bucket: __dirname + '/local/otters'
+
 		};
 
 		s3.deleteObjects(to_delete, function (err, data) {
@@ -230,7 +232,7 @@ describe('S3', function () {
 			expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 4.txt')).to.equal(false);
 			expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy 5.txt')).to.equal(false);
 
-			s3.listObjects({Prefix: 'sea', Bucket: __dirname + '/local/otters'}, function (err, data) {
+			s3.listObjects({Prefix: 'sea'}, function (err, data) {
 
 				expect(err).to.equal(null);
 				expect(data.Contents.length).to.equal(555);
@@ -265,7 +267,7 @@ describe('S3', function () {
 			Delete: {
 				Objects: keys
 			},
-			Bucket: __dirname + '/local/otters'
+
 		};
 
 		s3.deleteObjects(to_delete, function (err, data) {
@@ -288,7 +290,7 @@ describe('S3', function () {
 
 	it('should get the metadata about a file', function (done) {
 
-		s3.headObject({Key: 'animal.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.headObject({Key: 'animal.txt'}, function (err, data) {
 
 			expect(err).to.be.null;
 			expect(data.ETag).to.equal('"485737f20ae6c0c3e51f68dd9b93b4e9"');
@@ -299,7 +301,7 @@ describe('S3', function () {
 
 	it('should include a 404 statusCode for the metadata of a non-existant file', function (done) {
 
-		s3.headObject({Key: 'doesnt-exist.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.headObject({Key: 'doesnt-exist.txt'}, function (err, data) {
 
 			expect(err).to.not.be.null;
 			expect(err.statusCode).to.equal(404);
@@ -309,7 +311,7 @@ describe('S3', function () {
 
 	it('should get a file', function (done) {
 
-		s3.getObject({Key: 'sea/yo copy 10.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.getObject({Key: 'sea/yo copy 10.txt'}, function (err, data) {
 
 			expect(err).to.be.null;
 			expect(data.ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
@@ -320,7 +322,7 @@ describe('S3', function () {
 
 	it('should get a file and its content', function (done) {
 
-		s3.getObject({Key: 'animal.txt', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.getObject({Key: 'animal.txt'}, function (err, data) {
 
 			var expectedBody = "My favourite animal";
 			expect(err).to.be.null;
@@ -334,12 +336,12 @@ describe('S3', function () {
 
 	it('should create a file and have the same content in sub dir', function (done) {
 
-		s3.putObject({Key: 'punk/file', Body: fs.readFileSync(__dirname + '/local/file'), Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.putObject({Key: 'punk/file', Body: fs.readFileSync(__dirname + '/local/file')}, function (err, data) {
 
 			expect(err).to.be.null;
 			expect(fs.existsSync(__dirname + '/local/otters/punk/file')).to.equal(true);
 
-			s3.getObject({Key: 'punk/file', Bucket: __dirname + '/local/otters'}, function (err, data) {
+			s3.getObject({Key: 'punk/file'}, function (err, data) {
 
 				expect(err).to.be.null;
 				expect(data.Key).to.equal('punk/file');
@@ -351,31 +353,15 @@ describe('S3', function () {
 
 	it('should be able to put a string', function(done) {
 
-		s3.putObject({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}', Bucket: __dirname + '/local/otters'}, function(err, data) {
+		s3.putObject({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
 			expect(err).to.be.null;
 			expect(fs.existsSync(__dirname + '/local/otters/animal.json')).to.equal(true);
 
-			s3.getObject({Key: 'animal.json', Bucket: __dirname + '/local/otters'}, function(err, data) {
+			s3.getObject({Key: 'animal.json'}, function(err, data) {
 
 				expect(err).to.be.null;
 				expect(data.Key).to.equal('animal.json');
 				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true}');
-				done();
-			})
-		})
-	});
-
-	it('should be able to upload a string', function(done) {
-
-		s3.upload({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true,"upload":true}', Bucket: __dirname + '/local/otters'}, function(err, data) {
-			expect(err).to.be.null;
-			expect(fs.existsSync(__dirname + '/local/otters/animal.json')).to.equal(true);
-
-			s3.getObject({Key: 'animal.json', Bucket: __dirname + '/local/otters'}, function(err, data) {
-
-				expect(err).to.be.null;
-				expect(data.Key).to.equal('animal.json');
-				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true,"upload":true}');
 				done();
 			})
 		})
@@ -387,3 +373,42 @@ describe('S3', function () {
 	});
 
 });
+
+
+describe('Multiple S3 with defaultOptions', function () {
+
+	var s3_1 = AWS.S3({
+		Bucket: __dirname + '/local/concurrent1'
+	});
+	var s3_2 = AWS.S3({
+		Bucket: __dirname + '/local/concurrent2'
+	});
+
+	it('should use different defaults', function(done) {
+
+		s3_1.putObject({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/concurrent1/animal.json')).to.equal(true);
+
+			s3_2.putObject({Key: 'animal.json', Body: '{"is dog":true,"name":"snoopy","stringified object?":true}'}, function(err, data) {
+				expect(err).to.be.null;
+				expect(fs.existsSync(__dirname + '/local/concurrent2/animal.json')).to.equal(true);
+
+				s3_1.getObject({Key: 'animal.json'}, function(err, data) {
+					expect(err).to.be.null;
+					expect(data.Key).to.equal('animal.json');
+					expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true}');
+
+					s3_2.getObject({Key: 'animal.json'}, function(err, data) {
+						expect(err).to.be.null;
+						expect(data.Key).to.equal('animal.json');
+						expect(data.Body.toString()).to.equal('{"is dog":true,"name":"snoopy","stringified object?":true}');
+						done();
+					});
+				});
+			});
+		})
+	});
+
+});
+
