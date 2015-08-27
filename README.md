@@ -19,6 +19,7 @@ It uses a directory to mock a bucket and its content.
 If you'd like to see some more features or you have some suggestions, feel free to use the issues or submit a pull request.
 
 ## Release History
+* 2015-08-27   v0.5.0   Refactor and default options by @whitingj
 * 2015-07-28   v0.4.0   Add headObject method by @mdlavin
 * 2015-07-21   v0.3.0   Add CommonPrefixes to listObjects by @jakepruitt
 * 2015-03-15   v0.2.7   Mock out AWS' config submodule by @necaris
