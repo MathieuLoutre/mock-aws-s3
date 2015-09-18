@@ -148,6 +148,26 @@ describe('S3', function () {
 		});
 	});
 
+	it('should list all files in bucket (more than 1000) with no Prefix specified', function (done) {
+
+		s3.listObjects({Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[1].ETag).to.exist;
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('mix/');
+			expect(data.IsTruncated).to.equal(true);
+
+			done();
+		});
+	});
+
 	it('should delete the specified file', function (done) {
 
 		expect(fs.existsSync(__dirname + '/local/otters/sea/yo copy.txt')).to.equal(true);
