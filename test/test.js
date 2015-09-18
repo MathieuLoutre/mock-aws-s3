@@ -21,6 +21,7 @@ describe('S3', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.equal('sea/');
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.not.exist;
 			done();
 		});
 	});
@@ -39,13 +40,15 @@ describe('S3', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.not.exist;
 			done();
 		});
 	});
 
 	it('should list files in bucket with more than 1000 objects and use Prefix to filter - 3', function (done) {
 
-		s3.listObjects({Prefix: 'mix/', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: 'mix/', Bucket: __dirname + '/local/otters', Delimiter:'/'},
+                               function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
@@ -56,14 +59,16 @@ describe('S3', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.exist;
 			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
-			expect(data.Marker).to.exist;
+			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.exist;
 			done();
 		});
 	});
 
 	it('should list files starting a marker with a partial filename', function (done) {
 
-		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters',  Marker: 'mix/yay copy 10' }, function (err, data) {
+		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters',  Marker: 'mix/yay copy 10',
+                                Delimiter:'/' }, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
@@ -75,13 +80,88 @@ describe('S3', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
+			expect(data.NextMarker).to.exist;
 			done();
 		});
 	});
 
 	it('should list all files in bucket (more than 1000)', function (done) {
 
-		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters'}, function (err, data) {
+		s3.listObjects({Prefix: '', Bucket: __dirname + '/local/otters', Delimiter:'/'}, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[1].ETag).to.exist;
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('mix/');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.exist;
+
+			marker = data.NextMarker;
+
+			done();
+		});
+	});
+
+	it('should list more files in bucket (more than 1000) with marker', function (done) {
+
+		s3.listObjects({Prefix: '', Marker: marker, Bucket: __dirname + '/local/otters', Delimiter:'/'},
+                               function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[0].ETag).to.exist;
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[0].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('river/');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.Marker).to.exist;
+			expect(data.NextMarker).to.exist;
+
+			marker = data.NextMarker;
+
+			done();
+		});
+	});
+
+	it('should list more files in bucket (more than 1000) with marker - 2', function (done) {
+
+		s3.listObjects({Prefix: '', Marker: marker, Bucket: __dirname + '/local/otters', Delimiter:'/'},
+                               function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(947);
+			expect(data.Contents[0].ETag).to.exist;
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[0].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('sea/');
+			expect(data.IsTruncated).to.equal(false);
+			expect(data.Marker).to.exist;
+			expect(data.NextMarker).to.not.exist;
+
+			marker = data.NextMarker;
+
+			done();
+		});
+	});
+
+	it('should list all files in bucket (more than 1000) with no Prefix specified', function (done) {
+
+		s3.listObjects({Bucket: __dirname + '/local/otters'}, function (err, data) {
 
 			expect(err).to.equal(null);
 			expect(data.Contents.length).to.equal(1000);
@@ -96,57 +176,10 @@ describe('S3', function () {
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
 
-			marker = data.Marker;
-
 			done();
 		});
 	});
 
-	it('should list more files in bucket (more than 1000) with marker', function (done) {
-
-		s3.listObjects({Prefix: '', Marker: marker, Bucket: __dirname + '/local/otters'}, function (err, data) {
-
-			expect(err).to.equal(null);
-			expect(data.Contents.length).to.equal(1000);
-			expect(data.Contents[0].ETag).to.exist;
-			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
-			expect(data.Contents[0].Key).to.exist;
-			expect(data.CommonPrefixes.length).to.equal(2);
-			expect(data.CommonPrefixes[0].Prefix).to.exist;
-			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
-			expect(data.CommonPrefixes[1].Prefix).to.exist;
-			expect(data.CommonPrefixes[1].Prefix).to.equal('river/');
-			expect(data.IsTruncated).to.equal(true);
-			expect(data.Marker).to.exist;
-
-			marker = data.Marker;
-
-			done();
-		});
-	});
-
-	it('should list more files in bucket (more than 1000) with marker - 2', function (done) {
-
-		s3.listObjects({Prefix: '', Marker: marker, Bucket: __dirname + '/local/otters'}, function (err, data) {
-
-			expect(err).to.equal(null);
-			expect(data.Contents.length).to.equal(947);
-			expect(data.Contents[0].ETag).to.exist;
-			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
-			expect(data.Contents[0].Key).to.exist;
-			expect(data.CommonPrefixes.length).to.equal(2);
-			expect(data.CommonPrefixes[0].Prefix).to.exist;
-			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
-			expect(data.CommonPrefixes[1].Prefix).to.exist;
-			expect(data.CommonPrefixes[1].Prefix).to.equal('sea/');
-			expect(data.IsTruncated).to.equal(false);
-			expect(data.Marker).to.not.exist;
-
-			marker = data.Marker;
-
-			done();
-		});
-	});
 
 	it('should delete the specified file', function (done) {
 
