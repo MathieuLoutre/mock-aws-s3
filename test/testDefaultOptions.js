@@ -5,7 +5,8 @@ var fs = require('fs');
 describe('S3 with defaultOptions', function () {
 
 	var s3 = AWS.S3({
-		Bucket: __dirname + '/local/otters'
+		Bucket: __dirname + '/local/otters',
+                Delimiter: '/'
 	});
 	var marker = null;
 
@@ -23,6 +24,7 @@ describe('S3 with defaultOptions', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.equal('sea/');
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.not.exist;
 			done();
 		});
 	});
@@ -41,6 +43,7 @@ describe('S3 with defaultOptions', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
 			expect(data.IsTruncated).to.equal(false);
 			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.not.exist;
 			done();
 		});
 	});
@@ -58,7 +61,8 @@ describe('S3 with defaultOptions', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.exist;
 			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
-			expect(data.Marker).to.exist;
+			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.exist;
 			done();
 		});
 	});
@@ -77,6 +81,7 @@ describe('S3 with defaultOptions', function () {
 			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
+			expect(data.NextMarker).to.exist;
 			done();
 		});
 	});
@@ -96,9 +101,10 @@ describe('S3 with defaultOptions', function () {
 			expect(data.CommonPrefixes[1].Prefix).to.exist;
 			expect(data.CommonPrefixes[1].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
-			expect(data.Marker).to.exist;
+			expect(data.Marker).to.not.exist;
+			expect(data.NextMarker).to.exist;
 
-			marker = data.Marker;
+			marker = data.NextMarker;
 
 			done();
 		});
@@ -120,8 +126,9 @@ describe('S3 with defaultOptions', function () {
 			expect(data.CommonPrefixes[1].Prefix).to.equal('river/');
 			expect(data.IsTruncated).to.equal(true);
 			expect(data.Marker).to.exist;
+			expect(data.NextMarker).to.exist;
 
-			marker = data.Marker;
+			marker = data.NextMarker;
 
 			done();
 		});
@@ -142,9 +149,10 @@ describe('S3 with defaultOptions', function () {
 			expect(data.CommonPrefixes[1].Prefix).to.exist;
 			expect(data.CommonPrefixes[1].Prefix).to.equal('sea/');
 			expect(data.IsTruncated).to.equal(false);
-			expect(data.Marker).to.not.exist;
+			expect(data.Marker).to.exist;
+			expect(data.NextMarker).to.not.exist;
 
-			marker = data.Marker;
+			marker = data.NextMarker;
 
 			done();
 		});
