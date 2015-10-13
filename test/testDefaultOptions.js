@@ -4,10 +4,14 @@ var fs = require('fs');
 
 describe('S3 with defaultOptions', function () {
 
-    //AWS.defaultOptions.copySource = __dirname + '/local/';
+    //AWS.defaultOptions can be used to set defaultOptions on S3 instance instead of using the constructor options parameter
+    //AWS.defaultOptions.copySourcePrefix = __dirname + '/local/';
+    //AWS.defaultOptions.Bucket = __dirname + '/local/otters';
+    //AWS.defaultOptions.Delimiter = '/';
 	var s3 = AWS.S3({
 		Bucket: __dirname + '/local/otters',
-                Delimiter: '/'
+        Delimiter: '/',
+        copySourcePrefix: __dirname + '/local/'
 	});
 	var marker = null;
 
@@ -381,15 +385,15 @@ describe('S3 with defaultOptions', function () {
 		expect(s3.config.update).to.be.a('function');
 	});
 
-    /*
+    
     it('should be able to copy an object', function(done) {
         s3.copyObject({ Key: 'file_copy', CopySource: 'file' }, function(err, data) {
-            console.log(err);
 			expect(err).to.be.null;
 			expect(fs.existsSync(__dirname + '/local/otters/file_copy')).to.equal(true);
+            done();
         });
     });
-    */
+    
 });
 
 
