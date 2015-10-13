@@ -4,6 +4,7 @@ var fs = require('fs');
 
 describe('S3 with defaultOptions', function () {
 
+    //AWS.defaultOptions.copySource = __dirname + '/local/';
 	var s3 = AWS.S3({
 		Bucket: __dirname + '/local/otters',
                 Delimiter: '/'
@@ -380,6 +381,15 @@ describe('S3 with defaultOptions', function () {
 		expect(s3.config.update).to.be.a('function');
 	});
 
+    /*
+    it('should be able to copy an object', function(done) {
+        s3.copyObject({ Key: 'file_copy', CopySource: 'file' }, function(err, data) {
+            console.log(err);
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/otters/file_copy')).to.equal(true);
+        });
+    });
+    */
 });
 
 
