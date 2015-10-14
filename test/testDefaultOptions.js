@@ -4,9 +4,11 @@ var fs = require('fs');
 
 describe('S3 with defaultOptions', function () {
 
-	var s3 = AWS.S3({
+    var s3 = AWS.S3({ 
+      params: {
 		Bucket: __dirname + '/local/otters',
         Delimiter: '/',
+      }
 	});
 	var marker = null;
 
@@ -385,11 +387,15 @@ describe('S3 with defaultOptions', function () {
 
 describe('Multiple S3 with defaultOptions', function () {
 
-	var s3_1 = AWS.S3({
+    var s3_1 = AWS.S3({ 
+      params: {
 		Bucket: __dirname + '/local/concurrent1'
+      }
 	});
 	var s3_2 = AWS.S3({
+      params: {
 		Bucket: __dirname + '/local/concurrent2'
+      }
 	});
 
 	it('should use different defaults', function(done) {

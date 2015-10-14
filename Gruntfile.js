@@ -35,6 +35,12 @@ module.exports = function(grunt) {
         },
         src: ['test/testDefaultOptions.js']
       },
+      testDefaultOptionsAndBasePath: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/testDefaultOptionsBasePath.js']
+      },
       testBasePath: {
         options: {
           reporter: 'spec'
@@ -62,6 +68,6 @@ module.exports = function(grunt) {
 
   // By default, lint and run all tests.
   grunt.registerTask('lint', 'jshint');
-  grunt.registerTask('default', ['clean', 'copy', 'mochaTest:test', 'clean', 'copy', 'mochaTest:testDefaultOptions','clean', 'copy', 'mochaTest:testBasePath']);
+  grunt.registerTask('default', ['clean', 'copy', 'mochaTest:test', 'clean', 'copy', 'mochaTest:testDefaultOptions','clean', 'copy', 'mochaTest:testBasePath','clean', 'copy', 'mochaTest:testDefaultOptionsAndBasePath']);
 
 };
