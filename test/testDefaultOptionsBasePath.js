@@ -2,11 +2,12 @@ var expect = require('chai').expect;
 var AWS = require('../');
 var fs = require('fs');
 
-describe('S3 with defaultOptions', function () {
+describe('S3 with defaultOptions and basePath', function () {
 
+    AWS.config.basePath = __dirname + '/local/';
     var s3 = AWS.S3({ 
       params: {
-		Bucket: __dirname + '/local/otters',
+		Bucket: 'otters',
         Delimiter: '/',
       }
 	});
@@ -387,14 +388,15 @@ describe('S3 with defaultOptions', function () {
 
 describe('Multiple S3 with defaultOptions', function () {
 
+    AWS.config.basePath = __dirname + '/local/';
     var s3_1 = AWS.S3({ 
       params: {
-		Bucket: __dirname + '/local/concurrent1'
+		Bucket: 'concurrent1'
       }
 	});
 	var s3_2 = AWS.S3({
       params: {
-		Bucket: __dirname + '/local/concurrent2'
+		Bucket: 'concurrent2'
       }
 	});
 
