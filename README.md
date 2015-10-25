@@ -40,7 +40,7 @@ If you'd like to see some more features or you have some suggestions, feel free 
 var AWSMock = require('mock-aws-s3');
 AWSMock.config.basePath = '/tmp/buckets/' // Can configure a basePath for your local buckets
 var s3 = AWSMock.S3({
-	Bucket: 'example'
+	params: { Bucket: 'example' }
 });
 s3.putObject({Key: 'sea/animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
 	s3.listObjects({Prefix: 'sea'}, function (err, data) {
