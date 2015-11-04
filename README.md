@@ -18,7 +18,8 @@ It uses a directory to mock a bucket and its content.
 If you'd like to see some more features or you have some suggestions, feel free to use the issues or submit a pull request.
 
 ## Release History
-* 2015-10-25   v1.1.0   Static basePath configuration and bound params to instance by @CJNE
+* 2015-11-04   v2.0.0   Static basePath configuration, bound params (by @CJNE) and match upload API (by @kyleseely)
+* 2015-10-25   v1.1.0   Removed because of potential breaking change with bound params
 * 2015-09-24   v1.0.0   Breaking changes and awesome PR to fix API inconsistencies by @irothschild
 * 2015-08-27   v0.5.0   Refactor and default options by @whitingj
 * 2015-07-28   v0.4.0   Add headObject method by @mdlavin
