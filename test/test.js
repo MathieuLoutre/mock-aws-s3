@@ -392,8 +392,8 @@ describe('S3', function () {
 				expect(data.Key).to.equal('animal.json');
 				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true}');
 				done();
-			})
-		})
+			});
+		});
 	});
 
 	it('should be able to upload a string', function(done) {
@@ -408,8 +408,25 @@ describe('S3', function () {
 				expect(data.Key).to.equal('animal.json');
 				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true,"upload":true}');
 				done();
-			})
-		})
+			});
+		});
+	});
+
+	it('should be able to upload something and use the send method to handle the callback', function(done) {
+
+		var req = s3.upload({Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true,"upload":true}', Bucket: __dirname + '/local/otters'});
+		req.send(function (err, data) {
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/otters/animal.json')).to.equal(true);
+
+			s3.getObject({Key: 'animal.json', Bucket: __dirname + '/local/otters'}, function(err, data) {
+
+				expect(err).to.be.null;
+				expect(data.Key).to.equal('animal.json');
+				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true,"upload":true}');
+				done();
+			});
+		});
 	});
 
 	it('should accept "configuration"', function() {
