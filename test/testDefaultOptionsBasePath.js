@@ -142,7 +142,7 @@ describe('S3 with defaultOptions and basePath', function () {
 		s3.listObjects({Prefix: '', Marker: marker}, function (err, data) {
 
 			expect(err).to.equal(null);
-			expect(data.Contents.length).to.equal(947);
+			expect(data.Contents.length).to.equal(945);
 			expect(data.Contents[0].ETag).to.exist;
 			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
 			expect(data.Contents[0].Key).to.exist;
