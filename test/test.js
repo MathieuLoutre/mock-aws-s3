@@ -25,6 +25,17 @@ describe('S3', function () {
 			done();
 		});
 	});
+	
+	it('should limit number of files returned to MaxKeys', function (done) {
+
+		s3.listObjects({Prefix: 'sea/', Bucket: __dirname + '/local/otters', MaxKeys: 55 }, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(55);
+			expect(data.IsTruncated).to.equal(true);
+			done();
+		});
+	});
 
 	it('should list files in bucket with less than 1000 objects and use Prefix to filter - 2', function (done) {
 
