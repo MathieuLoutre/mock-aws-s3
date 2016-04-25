@@ -1,7 +1,6 @@
 # Mock AWS S3 SDK
 
-This is a very simple interface that mocks the AWS SDK for Node.js.
-It is incomplete as it will mainly be used to test the grunt plugin `grunt-aws-s3`.
+This is a very simple interface that mocks the AWS SDK for Node.js. The implementation is incomplete but most basic features are supported.
 
 Available:
 - listObjects
@@ -18,6 +17,7 @@ It uses a directory to mock a bucket and its content.
 If you'd like to see some more features or you have some suggestions, feel free to use the issues or submit a pull request.
 
 ## Release History
+* 2016-04-25   v2.2.0   Add MaxKey options in listObject by @hauboldj
 * 2016-01-18   v2.1.0   Fix markers on listObjects (by @wellsjo) and add send method (by @AllieRays and @IonicaBizau)
 * 2015-11-04   v2.0.0   Static basePath configuration, bound params (by @CJNE) and match upload API (by @kyleseely)
 * 2015-10-25   v1.1.0   Removed because of potential breaking change with bound params
