@@ -4,13 +4,53 @@ var fs = require('fs');
 
 describe('S3 with defaultOptions', function () {
 
-    var s3 = AWS.S3({ 
+    var s3 = AWS.S3({
       params: {
 		Bucket: __dirname + '/local/otters',
         Delimiter: '/',
       }
 	});
 	var marker = null;
+
+// createBucket tests
+  it('should create a bucket with valid arguments', function(done)
+  {
+    var params =
+    {
+      // Using the path below to avoid writing to VCS'd dirs
+      // Formatting the bucket name as per other tests
+      Bucket: __dirname + "/local/test-bucket-3"
+    };
+
+    s3.createBucket(params, function(err)
+    {
+      expect(err).to.equal(null);
+      expect(fs.existsSync(params.Bucket)).to.equal(true);
+      done();
+    });
+  });
+
+  it('should return an error with invalid arguments (null params.Bucket)', function(done)
+  {
+    var params =
+    {
+      // Using the path below to avoid writing to VCS'd dirs
+      // Formatting the bucket name as per other tests
+      Bucket: null
+    };
+
+    s3.createBucket(params, function(err)
+    {
+      // This isn't working, maybe a chai issue?
+      // expect(new Error).to.be.an('error');
+      // expect(err).to.be.an("error");
+
+      // So this will have to do for the moment
+      expect(err).not.to.equal(null);
+      expect(fs.existsSync(params.Bucket)).to.equal(false);
+      done();
+    });
+  });
 
 	it('should list files in bucket with less than 1000 objects and use Prefix to filter', function (done) {
 
@@ -392,13 +432,13 @@ describe('S3 with defaultOptions', function () {
 		expect(s3.config).to.be.ok;
 		expect(s3.config.update).to.be.a('function');
 	});
-    
+
 });
 
 
 describe('Multiple S3 with defaultOptions', function () {
 
-    var s3_1 = AWS.S3({ 
+    var s3_1 = AWS.S3({
       params: {
 		Bucket: __dirname + '/local/concurrent1'
       }
@@ -436,4 +476,3 @@ describe('Multiple S3 with defaultOptions', function () {
 	});
 
 });
-
