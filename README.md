@@ -3,6 +3,7 @@
 This is a very simple interface that mocks the AWS SDK for Node.js. The implementation is incomplete but most basic features are supported.
 
 Available:
+- createBucket
 - listObjects
 - deleteObjects
 - deleteObject

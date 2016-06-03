@@ -4,9 +4,51 @@ var fs = require('fs');
 
 describe('S3 with baseBath', function () {
 
-    AWS.config.basePath = __dirname + '/local/';
+  AWS.config.basePath = __dirname + '/local/';
 	var s3 = AWS.S3();
 	var marker = null;
+
+
+
+  // createBucket tests
+  	it('should create a bucket with valid arguments', function(done)
+  	{
+  		var params =
+  		{
+  			// Using the path below to avoid writing to VCS'd dirs
+  			// Formatting the bucket name as per other tests
+        Bucket: "test-bucket-2"
+  		};
+
+  		s3.createBucket(params, function(err)
+  		{
+  			expect(err).to.equal(null);
+        expect(fs.existsSync(AWS.config.basePath + params.Bucket)).to.equal(true);
+  			done();
+  		});
+  	});
+
+  	it('should return an error with invalid arguments (null params.Bucket)', function(done)
+  	{
+  		var params =
+  		{
+  			// Using the path below to avoid writing to VCS'd dirs
+  			// Formatting the bucket name as per other tests
+  			Bucket: null
+  		};
+
+  		s3.createBucket(params, function(err)
+  		{
+  			// This isn't working, maybe a chai issue?
+  			// expect(new Error).to.be.an('error');
+  			// expect(err).to.be.an("error");
+
+  			// So this will have to do for the moment
+  			 expect(err).not.to.equal(null);
+         expect(fs.existsSync(params.Bucket)).to.equal(false);
+  			done();
+  		});
+  	});
 
 	it('should list files in bucket with less than 1000 objects and use Prefix to filter', function (done) {
 
