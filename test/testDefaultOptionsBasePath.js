@@ -430,11 +430,48 @@ describe('S3 with defaultOptions and basePath', function () {
 		})
 	});
 
+	it('should be able to get metadata on call to getObject', function(done) {
+
+		s3.putObject({Key: 'animal.json', Metadata : { breed : 'red', holdbreaths : 100 }, Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/otters/animal.json')).to.equal(true);
+
+			s3.getObject({Key: 'animal.json'}, function(err, data) {
+
+				expect(err).to.be.null;
+				expect(JSON.stringify(data.Metadata)).to.equal(JSON.stringify({ breed : 'red', holdbreaths : 100 }));
+				expect(data.Key).to.equal('animal.json');
+				expect(data.Body.toString()).to.equal('{"is dog":false,"name":"otter","stringified object?":true}');
+				done();
+			})
+		})
+	});
+
+	it('should be able to get metadata on call to headObject', function(done) {
+
+		s3.putObject({Key: 'animal.json', Metadata : { breed : 'red', holdbreaths : 100 }, Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
+			expect(err).to.be.null;
+			expect(fs.existsSync(__dirname + '/local/otters/animal.json')).to.equal(true);
+
+			s3.headObject({Key: 'animal.json'}, function(err, data) {
+
+				expect(err).to.be.null;
+				expect(JSON.stringify(data.Metadata)).to.equal(JSON.stringify({ breed : 'red', holdbreaths : 100 }));
+				expect(data.Key).to.equal('animal.json');
+				done();
+			})
+		})
+	});
+
 	it('should accept "configuration"', function() {
 		expect(s3.config).to.be.ok;
 		expect(s3.config.update).to.be.a('function');
 	});
 
+	it('should accept "configuration"', function() {
+		expect(s3.config).to.be.ok;
+		expect(s3.config.update).to.be.a('function');
+	});
 });
 
 
