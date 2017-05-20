@@ -1,11 +1,11 @@
 {
   "name": "mock-aws-s3",
   "description": "Mock AWS S3 SDK for Node.js",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "homepage": "https://github.com/MathieuLoutre/mock-aws-s3",
   "author": {
     "name": "Mathieu Triay",
-    "email": "mathieu@nightzookeeper.com"
+    "email": "mathieu.triay@gmail.com"
   },
   "repository": {
     "type": "git",
