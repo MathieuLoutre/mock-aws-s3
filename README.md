@@ -5,6 +5,7 @@ This is a very simple interface that mocks the AWS SDK for Node.js. The implemen
 Available:
 - createBucket
 - listObjects
+- listObjectsV2
 - deleteObjects
 - deleteObject
 - getObject
