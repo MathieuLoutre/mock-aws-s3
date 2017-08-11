@@ -7,7 +7,8 @@ var fs = require('fs');
 describe('S3', function () {
 
 	var s3 = AWS.S3();
-	var marker = null;
+	var marker = null; // for listObjects
+	var continuationToken = null; // for listObjectsV2
 
 // createBucket tests
 	it('should create a bucket with valid arguments', function(done)
@@ -245,6 +246,200 @@ describe('S3', function () {
 			expect(data.CommonPrefixes[1].Prefix).to.exist;
 			expect(data.CommonPrefixes[1].Prefix).to.equal('mix/');
 			expect(data.IsTruncated).to.equal(true);
+
+			done();
+		});
+	});
+
+	// listV2
+	it('should list files in bucket with less than 1000 objects and use Prefix to filter (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: 'sea/', Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(560);
+			expect(data.Contents[1].ETag).to.exist;
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('sea/');
+			expect(data.IsTruncated).to.equal(false);
+			expect(data.StartAfter).to.not.exist;
+			expect(data.ContinuationToken).to.not.exist;
+			expect(data.NextContinuationToken).to.not.exist;
+			done();
+		});
+	});
+
+	it('should limit number of files returned to MaxKeys (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: 'sea/', Bucket: __dirname + '/local/otters', MaxKeys: 55 }, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(55);
+			expect(data.IsTruncated).to.equal(true);
+			done();
+		});
+	});
+
+	it('should list files in bucket with less than 1000 objects and use Prefix to filter - 2 (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: 'river/', Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(912);
+			expect(data.Contents[1].ETag).to.exist;
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
+			expect(data.IsTruncated).to.equal(false);
+			expect(data.StartAfter).to.not.exist;
+			expect(data.ContinuationToken).to.not.exist;
+			expect(data.NextContinuationToken).to.not.exist;
+			done();
+		});
+	});
+
+	it('should list files in bucket with more than 1000 objects and use Prefix to filter - 3 (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: 'mix/', Bucket: __dirname + '/local/otters', Delimiter:'/'},
+                               function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[1].ETag).to.exist;
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.StartAfter).to.not.exist;
+			expect(data.ContinuationToken).to.not.exist;
+			expect(data.NextContinuationToken).to.exist;
+			done();
+		});
+	});
+
+	it('should list files starting a marker with a partial filename (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: '', Bucket: __dirname + '/local/otters',  StartAfter: 'mix/yay copy 10',
+                                Delimiter:'/' }, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[0].ETag).to.exist;
+			expect(data.Contents[0].Key).to.equal('mix/yay copy 10.txt');
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.CommonPrefixes.length).to.equal(1);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.StartAfter).to.exist;
+			expect(data.ContinuationToken).to.not.exist;
+			expect(data.NextContinuationToken).to.exist;
+			done();
+		});
+	});
+
+	it('should list all files in bucket (more than 1000) (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: '', Bucket: __dirname + '/local/otters', Delimiter:'/'}, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[1].ETag).to.exist;
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('mix/');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.StartAfter).to.not.exist;
+			expect(data.ContinuationToken).to.not.exist;
+			expect(data.NextContinuationToken).to.exist;
+
+			continuationToken = data.NextContinuationToken;
+
+			done();
+		});
+	});
+
+	it('should list more files in bucket (more than 1000) with continuationToken (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: '', ContinuationToken: continuationToken, Bucket: __dirname + '/local/otters', Delimiter:'/'},
+                               function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[0].ETag).to.exist;
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[0].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('mix/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('river/');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.StartAfter).to.not.exist;
+			expect(data.ContinuationToken).to.exist;
+			expect(data.NextContinuationToken).to.exist;
+
+			continuationToken = data.NextContinuationToken;
+
+			done();
+		});
+	});
+
+	it('should list more files in bucket (more than 1000) with marker - 2 (listV2)', function (done) {
+
+		s3.listObjectsV2({Prefix: '', ContinuationToken: continuationToken, Bucket: __dirname + '/local/otters', Delimiter:'/'},
+                               function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(945);
+			expect(data.Contents[0].ETag).to.exist;
+			expect(data.Contents[0].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[0].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('river/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('sea/');
+			expect(data.IsTruncated).to.equal(false);
+			expect(data.StartAfter).to.not.exist;
+			expect(data.ContinuationToken).to.exist;
+			expect(data.NextContinuationToken).to.not.exist;
+
+			continuationToken = data.NextContinuationToken;
+
+			done();
+		});
+	});
+
+	it('should list all files in bucket (more than 1000) with no Prefix specified (listV2)', function (done) {
+
+		s3.listObjectsV2({Bucket: __dirname + '/local/otters'}, function (err, data) {
+
+			expect(err).to.equal(null);
+			expect(data.Contents.length).to.equal(1000);
+			expect(data.Contents[1].ETag).to.exist;
+			expect(data.Contents[1].ETag).to.equal('"d41d8cd98f00b204e9800998ecf8427e"');
+			expect(data.Contents[1].Key).to.exist;
+			expect(data.CommonPrefixes.length).to.equal(2);
+			expect(data.CommonPrefixes[0].Prefix).to.exist;
+			expect(data.CommonPrefixes[0].Prefix).to.equal('/');
+			expect(data.CommonPrefixes[1].Prefix).to.exist;
+			expect(data.CommonPrefixes[1].Prefix).to.equal('mix/');
+			expect(data.IsTruncated).to.equal(true);
+			expect(data.StartAfter).to.not.exist;
+			expect(data.ContinuationToken).to.not.exist;
+			expect(data.NextContinuationToken).to.not.exist; // only returned with delimter
 
 			done();
 		});
