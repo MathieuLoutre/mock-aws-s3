@@ -500,9 +500,70 @@ describe('S3', function () {
 		});
 	});
 
+	it('should be able to put an object with tagging and retrieve them afterwards', function(done) {
+
+		s3.putObject({
+			Key: 'animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}',
+			Bucket: __dirname + '/local/otters',
+			Tagging: 'tag1=test1&tag2=test2'
+		}, function(err, data) {
+			expect(err).to.be.null;
+
+			s3.getObjectTagging({Key: 'animal.json', Bucket: __dirname + '/local/otters'}, function(err, data) {
+
+				expect(err).to.be.null;
+				expect(data.TagSet).to.deep.equal([
+					{ Key: 'tag1', Value: 'test1' },
+					{ Key: 'tag2', Value: 'test2' }
+				]);
+				done();
+			});
+		});
+	});
+
+	it('should fail to put object tags against a non-existing object', function(done) {
+		s3.putObjectTagging({Key: 'does-not-exist', Bucket: __dirname + '/local/otters',
+			Tagging: { TagSet: [] }
+		}, function(err, data) {
+			expect(err).to.not.be.null;
+			expect(err.statusCode).to.equal(404);
+			done();
+		});
+	});
+
+	it('should put object tags against an existing object', function(done) {
+		s3.putObjectTagging({Key: 'animal.txt', Bucket: __dirname + '/local/otters',
+		  Tagging: { TagSet: [ { Key: 'type', Value: 'otter' }] }
+		}, function(err, data) {
+			expect(err).to.be.null;
+			expect(data).to.not.be.null
+			done();
+		});
+	});
+
+	it('should get object tags from an existing object', function(done) {
+		s3.getObjectTagging({Key: 'animal.txt', Bucket: __dirname + '/local/otters'}, function(err, data) {
+			expect(err).to.be.null;
+			expect(data).to.not.be.null
+			expect(data.TagSet).to.deep.equal([
+				{ Key: 'type', Value: 'otter' }
+			])
+			done();
+		});
+	});
+
+	it('should fail to get object tags from a non-existing object', function(done) {
+		s3.getObjectTagging({Key: 'does-not-exist', Bucket: __dirname + '/local/otters'}, function(err, data) {
+			expect(err).to.not.be.null;
+			expect(err.statusCode).to.equal(404);
+			done();
+		});
+	});
+
+
+
 	it('should accept "configuration"', function() {
 		expect(s3.config).to.be.ok;
 		expect(s3.config.update).to.be.a('function');
 	});
-
 });

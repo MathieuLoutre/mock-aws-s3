@@ -11,6 +11,8 @@ Available:
 - headObject
 - putObject
 - copyObject
+- getObjectTagging
+- putObjectTagging
 - upload
 
 It uses a directory to mock a bucket and its content.
