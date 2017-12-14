@@ -774,7 +774,7 @@ describe('S3', function () {
 			});
         });
     });
-	
+
 	it('should accept "configuration"', function() {
 		expect(s3.config).to.be.ok;
 		expect(s3.config.update).to.be.a('function');

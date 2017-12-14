@@ -4,6 +4,7 @@ This is a very simple interface that mocks the AWS SDK for Node.js. The implemen
 
 Available:
 - createBucket
+- deleteBucket
 - listObjects
 - listObjectsV2
 - deleteObjects
@@ -48,15 +49,44 @@ If you'd like to see some more features or you have some suggestions, feel free 
 
 ## Example
 
+### Instantiate
+
 ```js
 var AWSMock = require('mock-aws-s3');
 AWSMock.config.basePath = '/tmp/buckets/' // Can configure a basePath for your local buckets
 var s3 = AWSMock.S3({
 	params: { Bucket: 'example' }
 });
+```
+
+### PutObject/ListObjects
+
+```js
 s3.putObject({Key: 'sea/animal.json', Body: '{"is dog":false,"name":"otter","stringified object?":true}'}, function(err, data) {
 	s3.listObjects({Prefix: 'sea'}, function (err, data) {
 		console.log(data);
 	});
+});
+```
+
+### CreateBucket
+
+```js
+var params = { Bucket: 'example' };
+s3.createBucket(params, function(err) {
+    if(err) {
+        console.error(err);
+    }
+});
+```
+
+### DeleteBucket
+
+```js
+var params = { Bucket: 'example' };
+s3.deleteBucket(params, function(err) {
+    if(err) {
+        console.error(err);
+    }
 });
 ```
