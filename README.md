@@ -22,6 +22,7 @@ It uses a directory to mock a bucket and its content.
 If you'd like to see some more features or you have some suggestions, feel free to use the issues or submit a pull request.
 
 ## Release History
+* 2018-06-16   v3.0.0   Contributions from @benedict-wellard and @telenor-digital-asia adding support for promises and deleteBucket
 * 2017-08-11   v2.6.0   Contributions from @pamelafox and @fkleon adding support for listObjectsV2, tagging and more useful debug info returned
 * 2017-05-31   v2.5.1   Fix bug when statSync was called on non existing files, spotted by @AllanHodkinson
 * 2017-05-20   v2.5.0   Set LastModified on getObject by @stujo, support for custom metadata on get/head by @rgparkins and putObject returns some data on error by @pamelafox
