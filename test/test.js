@@ -754,8 +754,26 @@ describe('S3', function () {
 			done();
 		});
 	});
+//delete bucket
+    it('should delete a bucket with valid arguments', function(done)
+    {
+        var params =
+            {
+                // Using the path below to avoid writing to VCS'd dirs
+                // Formatting the bucket name as per other tests
+                Bucket: __dirname + "/local/test-bucket-1"
+            };
 
-
+        s3.createBucket(params, function()
+        {
+        	s3.deleteBucket(params, function(err)
+			{
+				expect(err).to.be.null;
+                expect(fs.existsSync(params.Bucket)).to.equal(false);
+				done();
+			});
+        });
+    });
 
 	it('should accept "configuration"', function() {
 		expect(s3.config).to.be.ok;
