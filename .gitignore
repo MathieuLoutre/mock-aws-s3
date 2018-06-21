@@ -12,6 +12,7 @@ logs
 results
 
 npm-debug.log
+yarn.lock
 
 node_modules
 /test/local
