@@ -712,6 +712,24 @@ describe('S3', function () {
 			.catch(done);
     });
 
+    it('should be able to tag uploads using tags option', function(done) {
+		var key = 'tagging-' + Math.random();
+		var bucket = __dirname + '/local/tags';
+		var tags = [ { Key: 'foo', Value: 'bar' } ];
+		s3.upload({Key: key, Bucket: bucket, Body: 'stuff'}, {tags: tags}, function(err, data) {
+			expect(err).to.be.null;
+
+			s3.getObjectTagging({Key: key, Bucket: bucket}, function(err, data) {
+				expect(err).to.be.null;
+				expect(data.TagSet).to.deep.equal([
+					{ Key: 'foo', Value: 'bar' }
+				]);
+
+				done();
+			});
+		});
+    });
+
     it('should be able to put an object with tagging and retrieve them afterwards', function(done) {
 
 		s3.putObject({
