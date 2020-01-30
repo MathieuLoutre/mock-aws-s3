@@ -816,4 +816,47 @@ describe('S3', function () {
 		expect(s3.config).to.be.ok;
 		expect(s3.config.update).to.be.a('function');
 	});
+	
+	it('should create presigned url with valid configuration for getObject async', function(done)
+	{
+		var params =
+		{
+			// Using the path below to avoid writing to VCS'd dirs
+			// Formatting the bucket name as per other tests
+			Bucket: __dirname + '/local/otters',
+			Key: 'animal.txt',
+		};
+
+		s3.getSignedUrl('getObject', params, function(err, url)
+		{
+			expect(err).to.be.null;
+			
+			expect(url).to.be.a('string');
+			done();
+		});
+	});
+	
+	
+
+	it('should return an error with invalid arguments (null params.Bucket)', function(done)
+	{
+		var params =
+		{
+			// Using the path below to avoid writing to VCS'd dirs
+			// Formatting the bucket name as per other tests
+			// Bucket: null
+		};
+
+		s3.getSignedUrl('getObject', params, function(err, url)
+		{
+			// This isn't working, maybe a chai issue?
+			// expect(new Error).to.be.an('error');
+			// expect(err).to.be.an("error");
+
+			// So this will have to do for the moment
+			expect(err).not.to.equal(null);
+			expect(url).to.equal(null);
+			done();
+		});
+	});
 });

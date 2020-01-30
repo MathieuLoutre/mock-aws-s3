@@ -16,6 +16,7 @@ Available:
 - getObjectTagging
 - putObjectTagging
 - upload
+- getSignedUrl
 
 It uses a directory to mock a bucket and its content.
 
