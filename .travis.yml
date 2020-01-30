@@ -1,12 +1,10 @@
+sudo: false
+
 language: node_js
 
 node_js:
-  - "0.12"
-  - "0.10"
-  - "v4"
-  - "v5"
-  - "v6"
-  - "node"
+  - 10
+  - 12
 
 before_script:
   - npm install -g grunt-cli

@@ -14,6 +14,7 @@ results
 npm-debug.log
 
 node_modules
+yarn.lock
 /test/local
 
 .DS_Store
