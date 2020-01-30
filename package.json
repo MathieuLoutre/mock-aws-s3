@@ -1,7 +1,7 @@
 {
   "name": "mock-aws-s3",
   "description": "Mock AWS S3 SDK for Node.js",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "homepage": "https://github.com/MathieuLoutre/mock-aws-s3",
   "author": {
     "name": "Mathieu Triay",
@@ -21,10 +21,12 @@
     }
   ],
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 8.0.0"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "grunt",
+    "lint": "eslint '**/*.js' --ignore-pattern node_modules/",
+    "lint-fix": "eslint '**/*.js' --ignore-pattern node_modules/ --fix"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
@@ -33,12 +35,19 @@
   },
   "devDependencies": {
     "chai": "~1.7.2",
-    "grunt": "~0.4.0",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-jshint": "~0.2.0",
-    "grunt-mocha-test": "~0.6.3",
-    "mocha": "~1.12.1",
+    "eslint": "^5.9.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-chai-friendly": "^0.5.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "grunt": "^1.0.4",
+    "grunt-contrib-clean": "~2.0.0",
+    "grunt-contrib-copy": "~1.0.0",
+    "grunt-contrib-jshint": "^2.1.0",
+    "grunt-mocha-test": "^0.13.3",
+    "mocha": "^7.0.1",
     "stream-buffers": "^3.0.2"
   },
   "keywords": [

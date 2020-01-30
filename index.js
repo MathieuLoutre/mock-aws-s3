@@ -1,1 +1,1 @@
-module.exports = require('./lib/mock');
+module.exports = require('./lib/mock')
