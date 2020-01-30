@@ -3,6 +3,7 @@
 var expect = require('chai').expect;
 var AWS = require('../');
 var fs = require('fs');
+var streamBuffers = require('stream-buffers');
 
 describe('S3', function () {
 
@@ -625,6 +626,25 @@ describe('S3', function () {
 			expect(data.Key).to.equal('animal.txt');
 			expect(data.Body.toString()).to.equal(expectedBody);
 			expect(data.ContentLength).to.equal(expectedBody.length);
+			done();
+		});
+	});
+
+	it('should get a readable stream out of a file', function (done) {
+
+		var expectedBody = "My favourite animal";
+
+		var request = s3.getObject({ Key: 'animal.txt', Bucket: __dirname + '/local/otters' })
+
+		// Duck type-check the request object. It must have ALL of the following at least:
+		expect(request).to.have.property('promise');
+		expect(request).to.have.property('send');
+		expect(request).to.have.property('createReadStream');
+
+		// Dump the stream to a buffer to test it
+		const writableStream = new streamBuffers.WritableStreamBuffer();
+		request.createReadStream().pipe(writableStream).on('finish', function () {
+			expect(writableStream.getContentsAsString()).to.equal(expectedBody)
 			done();
 		});
 	});
