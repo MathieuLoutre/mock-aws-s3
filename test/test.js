@@ -3,6 +3,7 @@
 var expect = require('chai').expect;
 var AWS = require('../');
 var fs = require('fs');
+var streamBuffers = require('stream-buffers');
 
 describe('S3', function () {
 
@@ -629,6 +630,25 @@ describe('S3', function () {
 		});
 	});
 
+	it('should get a readable stream out of a file', function (done) {
+
+		var expectedBody = "My favourite animal";
+
+		var request = s3.getObject({ Key: 'animal.txt', Bucket: __dirname + '/local/otters' })
+
+		// Duck type-check the request object. It must have ALL of the following at least:
+		expect(request).to.have.property('promise');
+		expect(request).to.have.property('send');
+		expect(request).to.have.property('createReadStream');
+
+		// Dump the stream to a buffer to test it
+		const writableStream = new streamBuffers.WritableStreamBuffer();
+		request.createReadStream().pipe(writableStream).on('finish', function () {
+			expect(writableStream.getContentsAsString()).to.equal(expectedBody)
+			done();
+		});
+	});
+
 	it('should create a file and have the same content in sub dir', function (done) {
 
 		s3.putObject({Key: 'punk/file', Body: fs.readFileSync(__dirname + '/local/file'), Bucket: __dirname + '/local/otters'}, function (err, data) {
@@ -813,5 +833,48 @@ describe('S3', function () {
 	it('should accept "configuration"', function() {
 		expect(s3.config).to.be.ok;
 		expect(s3.config.update).to.be.a('function');
+	});
+	
+	it('should create presigned url with valid configuration for getObject async', function(done)
+	{
+		var params =
+		{
+			// Using the path below to avoid writing to VCS'd dirs
+			// Formatting the bucket name as per other tests
+			Bucket: __dirname + '/local/otters',
+			Key: 'animal.txt',
+		};
+
+		s3.getSignedUrl('getObject', params, function(err, url)
+		{
+			expect(err).to.be.null;
+			
+			expect(url).to.be.a('string');
+			done();
+		});
+	});
+	
+	
+
+	it('should return an error with invalid arguments (null params.Bucket)', function(done)
+	{
+		var params =
+		{
+			// Using the path below to avoid writing to VCS'd dirs
+			// Formatting the bucket name as per other tests
+			// Bucket: null
+		};
+
+		s3.getSignedUrl('getObject', params, function(err, url)
+		{
+			// This isn't working, maybe a chai issue?
+			// expect(new Error).to.be.an('error');
+			// expect(err).to.be.an("error");
+
+			// So this will have to do for the moment
+			expect(err).not.to.equal(null);
+			expect(url).to.equal(null);
+			done();
+		});
 	});
 });

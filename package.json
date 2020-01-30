@@ -1,7 +1,7 @@
 {
   "name": "mock-aws-s3",
   "description": "Mock AWS S3 SDK for Node.js",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "homepage": "https://github.com/MathieuLoutre/mock-aws-s3",
   "author": {
     "name": "Mathieu Triay",
@@ -32,13 +32,14 @@
     "underscore": "1.8.3"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.2.0",
-    "grunt": "~0.4.0",
     "chai": "~1.7.2",
-    "mocha": "~1.12.1",
-    "grunt-mocha-test": "~0.6.3",
+    "grunt": "~0.4.0",
+    "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-clean": "~0.5.0"
+    "grunt-contrib-jshint": "~0.2.0",
+    "grunt-mocha-test": "~0.6.3",
+    "mocha": "~1.12.1",
+    "stream-buffers": "^3.0.2"
   },
   "keywords": [
     "aws",
