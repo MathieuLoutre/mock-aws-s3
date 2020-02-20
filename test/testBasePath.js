@@ -441,7 +441,7 @@ describe('S3 with baseBath', function () {
 
 	it('should be able to copy an object', function (done) {
 		s3.copyObject({ Key: 'animal_copy.txt', Bucket: 'otters', CopySource: 'otters/animal.txt' }, function (err, data) {
-			expect(err).to.equal(null)
+			expect(err).to.equal(undefined)
 			expect(fs.existsSync(path.join(__dirname, '/local/otters/animal_copy.txt'))).to.equal(true)
 			done()
 		})
