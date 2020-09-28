@@ -1,3 +1,4 @@
+/* eslint-disable standard/no-callback-literal */
 /*
  * grunt-mock-s3
  * https://github.com/MathieuLoutre/grunt-mock-s3
@@ -396,7 +397,8 @@ class S3Mock {
 		})
 
 		if (errors.length > 0) {
-			callback(new AWSError('Error deleting objects'), {
+			// eslint-disable-next-line standard/no-callback-literal
+			callback(new Error('Error deleting objects') as AWSError, {
 				// @ts-expect-error
 				Errors: errors,
 				// @ts-expect-error
@@ -458,8 +460,8 @@ class S3Mock {
 				else {
 					callback(
 						err.code === 'ENOENT'
-							? new AWSError(JSON.stringify({ ...err, statusCode: 404 }))
-							: new AWSError(err.message),
+							? new Error('No such file or directory') as AWSError
+							: new Error('Unknown error') as AWSError,
 						search
 					)
 				}
@@ -479,8 +481,9 @@ class S3Mock {
 		fs.copy(
 			decodeURIComponent(search.CopySource),
 			search.Bucket + '/' + search.Key,
+			// eslint-disable-next-line handle-callback-err
 			function (err) {
-				callback(new AWSError(err.message), search)
+				callback(new Error('Failed to copy source') as AWSError, search)
 			}
 		)
 	}
@@ -524,7 +527,7 @@ class S3Mock {
 				else {
 					if (err.code === 'ENOENT') {
 						return callback(
-							new AWSError(
+							new Error(
 								JSON.stringify({
 									cfId: undefined,
 									code: 'NoSuchKey',
@@ -533,12 +536,12 @@ class S3Mock {
 									region: null,
 									statusCode: 404
 								})
-							),
+							) as AWSError,
 							search
 						)
 					}
 
-					callback(new AWSError(err.message), search)
+					callback(new Error('Unknown error') as AWSError, search)
 				}
 			})
 		}
@@ -579,13 +582,14 @@ class S3Mock {
 			var bucketPath = opts.basePath || ''
 			bucketPath += opts.Bucket
 
+			// eslint-disable-next-line handle-callback-err
 			fs.mkdirs(bucketPath, function (err) {
-				return callback(new AWSError(err.message), {})
+				return callback(new Error('Failed to create folders for bucket') as AWSError, {})
 			})
 		}
 		else {
 			// ...if the params object is not well-formed, fail fast
-			return callback(new AWSError(err.message), {})
+			return callback(new Error('Params object is not well-formed') as AWSError, {})
 		}
 	}
 
@@ -616,14 +620,15 @@ class S3Mock {
 		)
 
 		if (err !== null) {
-			callback(new AWSError(err.message), {})
+			callback(new Error('Error: ' + err.message) as AWSError, {})
 		}
 
 		var bucketPath = opts.basePath || ''
 		bucketPath += opts.Bucket
 
+		// eslint-disable-next-line handle-callback-err
 		fs.remove(bucketPath, function (err) {
-			return callback(new AWSError(err.message), {})
+			return callback(new Error('Failed to remove file') as AWSError, {})
 		})
 	}
 
@@ -732,6 +737,8 @@ class S3Mock {
 
 		this.headObject(search, function (err, _props) {
 			if (err) {
+				err.statusCode = 404
+
 				return callback(err, { TagSet: [] })
 			}
 			else {
@@ -750,11 +757,13 @@ class S3Mock {
 		var self = this
 
 		if (!search.Tagging || !search.Tagging.TagSet) {
-			return callback(new AWSError('Tagging.TagSet required'), {})
+			return callback(new Error('Tagging.TagSet required') as AWSError, {})
 		}
 
 		this.headObject(search, function (err, props) {
 			if (err) {
+				err.statusCode = 404
+
 				return callback(err, {})
 			}
 			else {
@@ -777,9 +786,9 @@ class S3Mock {
 		if (options && options.tags) {
 			if (!Array.isArray(options.tags)) {
 				return callback(
-					new AWSError(
+					new Error(
 						`Tags must be specified as an array; ${typeof options.tags} provided`
-					),
+					) as AWSError,
 					null
 				)
 			}
@@ -815,7 +824,7 @@ class S3Mock {
 	}
 }
 
-export const S3 = function (options: S3MockOptions) {
+export const S3 = function (options?: S3MockOptions) {
 	Object.keys(S3Mock.prototype).forEach((key) => {
 		// @ts-expect-error
 		if (typeof S3Mock.prototype[key] === 'function') {
