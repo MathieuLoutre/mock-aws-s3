@@ -18,7 +18,20 @@ type Config = {
 	update?: Function
 };
 
-type Cb = (err: Error | null, data: any) => void
+type Cb<T = any> = (err: Error | null, data: T) => void
+
+type ListResult = {
+	Contents: Array<{
+		Key: string;
+		ETag: string;
+		LastModified: Date;
+		Size: number;
+	}>
+	CommonPrefixes: Array<{Prefix: string}>
+	IsTruncated: boolean
+	Marker?: string
+	NextMarker?: string
+}
 
 const Buffer = buffer.Buffer
 
@@ -155,8 +168,7 @@ class S3Mock {
 		}
 	}
 
-	// @ts-expect-error
-	listObjectsV2 (searchV2, callback: Cb) {
+	listObjectsV2 (searchV2: any, callback: Cb) {
 		var searchV1 = _(searchV2).clone()
 		// Marker in V1 is StartAfter in V2
 		// ContinuationToken trumps marker on subsequent requests.
@@ -173,8 +185,7 @@ class S3Mock {
 		})
 	}
 
-	// @ts-expect-error
-	listObjects (search, callback: Cb) {
+	listObjects (search: any, callback: Cb) {
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
 		var files = walk(search.Bucket)
 
@@ -229,20 +240,7 @@ class S3Mock {
 			)
 		}
 
-		type Result = {
-			Contents: Array<{
-				Key: string;
-				ETag: string;
-				LastModified: Date;
-				Size: number;
-			}>
-			CommonPrefixes: Array<{Prefix: string}>
-			IsTruncated: boolean
-			Marker?: string
-			NextMarker?: string
-		}
-
-		const result: Result = {
+		const result: ListResult = {
 			Contents: _.map(filteredFiles, function (path) {
 				var stat = fs.statSync(path)
 
