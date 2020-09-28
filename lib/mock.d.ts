@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import fs from 'fs-extra';
-import { AWSError } from 'aws-sdk/lib/error';
 import { CopyObjectOutput, CopyObjectRequest, CreateBucketOutput, CreateBucketRequest, DeleteBucketRequest, DeleteObjectOutput, DeleteObjectRequest, DeleteObjectsOutput, DeleteObjectsRequest, GetObjectOutput, GetObjectRequest, GetObjectTaggingOutput, GetObjectTaggingRequest, HeadObjectOutput, HeadObjectRequest, ListObjectsOutput, ListObjectsRequest, ListObjectsV2Output, ListObjectsV2Request, PutObjectOutput, PutObjectRequest, PutObjectTaggingOutput, PutObjectTaggingRequest } from 'aws-sdk/clients/s3';
+import { AWSError } from 'aws-sdk/lib/core';
 declare type Cb<T = any> = (err: AWSError | null, data: T) => void;
 /** FakeStream class for mocking S3 streams */
 declare class FakeStream {
