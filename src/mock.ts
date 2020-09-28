@@ -18,6 +18,8 @@ type Config = {
 	update?: Function
 };
 
+type Cb = (err: Error | null, data: any) => void
+
 const Buffer = buffer.Buffer
 
 // Gathered from http://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search
@@ -154,13 +156,12 @@ class S3Mock {
 	}
 
 	// @ts-expect-error
-	listObjectsV2 (searchV2, callback) {
+	listObjectsV2 (searchV2, callback: Cb) {
 		var searchV1 = _(searchV2).clone()
 		// Marker in V1 is StartAfter in V2
 		// ContinuationToken trumps marker on subsequent requests.
 		searchV1.Marker = searchV2.ContinuationToken || searchV2.StartAfter
 
-		// @ts-expect-error
 		this.listObjects(searchV1, function (err, resultV1) {
 			var resultV2 = _(resultV1).clone()
 			// Rewrite NextMarker to NextContinuationToken
@@ -173,7 +174,7 @@ class S3Mock {
 	}
 
 	// @ts-expect-error
-	listObjects (search, callback) {
+	listObjects (search, callback: Cb) {
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
 		var files = walk(search.Bucket)
 
@@ -228,7 +229,20 @@ class S3Mock {
 			)
 		}
 
-		var result = {
+		type Result = {
+			Contents: Array<{
+				Key: string;
+				ETag: string;
+				LastModified: Date;
+				Size: number;
+			}>
+			CommonPrefixes: Array<{Prefix: string}>
+			IsTruncated: boolean
+			Marker?: string
+			NextMarker?: string
+		}
+
+		const result: Result = {
 			Contents: _.map(filteredFiles, function (path) {
 				var stat = fs.statSync(path)
 
@@ -270,20 +284,17 @@ class S3Mock {
 		}
 
 		if (search.Marker) {
-			// @ts-expect-error
 			result.Marker = search.Marker
 		}
 
 		if (truncated && search.Delimiter) {
-			// @ts-expect-error
-			result.NextMarker = _.last(result.Contents).Key
+			result.NextMarker = _.last(result.Contents)?.Key
 		}
 
 		callback(null, result)
 	}
 
-	// @ts-expect-error
-	getSignedUrl (operation: 'getObject' | 'putObject', params: {Bucket: string, Key: string}, callback) {
+	getSignedUrl (operation: 'getObject' | 'putObject', params: {Bucket: string, Key: string}, callback: Cb) {
 		const url =
 			'https://s3.us-east-2.amazonaws.com/' +
 			params.Bucket +
@@ -302,9 +313,9 @@ class S3Mock {
 			'2105e8d7892eb5dcc455ddd603c61e47520774a7289178af9ecc'
 
 		switch (operation) {
-		case 'getObject': // @ts-expect-error
+		case 'getObject':
 			this.headObject(params, function (err, props) {
-				if (err) {
+				if (err) { // @ts-expect-error
 					err.statusCode = 404
 				}
 
@@ -319,7 +330,7 @@ class S3Mock {
 				}
 				else {
 					if (err) {
-						throw new Error(err)
+						throw err
 					}
 
 					return url
@@ -337,8 +348,7 @@ class S3Mock {
 		}
 	}
 
-	// @ts-expect-error
-	deleteObjects (search, callback) {
+	deleteObjects (search: any, callback: Cb) {
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
 
 		var deleted: string[] = []
@@ -355,15 +365,14 @@ class S3Mock {
 		})
 
 		if (errors.length > 0) {
-			callback('Error deleting objects', { Errors: errors, Deleted: deleted })
+			callback(new Error('Error deleting objects'), { Errors: errors, Deleted: deleted })
 		}
 		else {
 			callback(null, { Deleted: deleted })
 		}
 	}
 
-	// @ts-expect-error
-	deleteObject (search, callback) {
+	deleteObject (search: any, callback: Cb) {
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
 
 		if (fs.existsSync(search.Bucket + '/' + search.Key)) {
@@ -375,8 +384,7 @@ class S3Mock {
 		}
 	}
 
-	// @ts-expect-error
-	headObject (search, callback) {
+	headObject (search: any, callback: Cb) {
 		var self = this
 
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
@@ -401,14 +409,13 @@ class S3Mock {
 					callback(null, props)
 				}
 				else {
-					callback(err.code === 'ENOENT' ? { ...err, statusCode: 404 } : err, search)
+					callback(err.code === 'ENOENT' ? new Error(JSON.stringify({ ...err, statusCode: 404 })) : err, search)
 				}
 			})
 		}
 	}
 
-	// @ts-expect-error
-	copyObject (search, callback) {
+	copyObject (search: any, callback: Cb) {
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
 
 		fs.mkdirsSync(path.dirname(search.Bucket + '/' + search.Key))
@@ -422,8 +429,7 @@ class S3Mock {
 		)
 	}
 
-	// @ts-expect-error
-	getObject (search, callback) {
+	getObject (search: any, callback: Cb) {
 		var self = this
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
 
@@ -454,16 +460,16 @@ class S3Mock {
 				}
 				else {
 					if (err.code === 'ENOENT') {
-						return callback(
-							{
-								cfId: undefined,
-								code: 'NoSuchKey',
-								message: 'The specified key does not exist.',
-								name: 'NoSuchKey',
-								region: null,
-								statusCode: 404
-							},
-							search
+						return callback(new Error(JSON.stringify({
+							cfId: undefined,
+							code: 'NoSuchKey',
+							message: 'The specified key does not exist.',
+							name: 'NoSuchKey',
+							region: null,
+							statusCode: 404
+						}))
+						,
+						search
 						)
 					}
 
@@ -473,8 +479,7 @@ class S3Mock {
 		}
 	}
 
-	// @ts-expect-error
-	createBucket (params: BucketCreationParams, callback) {
+	createBucket (params: BucketCreationParams, callback: Cb) {
 		var err = null
 
 		// param prop tests - these need to be done here to avoid issues with defaulted values
@@ -506,12 +511,12 @@ class S3Mock {
 			bucketPath += opts.Bucket
 
 			fs.mkdirs(bucketPath, function (err) {
-				return callback(err)
+				return callback(err, null)
 			})
 		}
 		else {
 			// ...if the params object is not well-formed, fail fast
-			return callback(err)
+			return callback(err, null)
 		}
 	}
 
@@ -520,8 +525,8 @@ class S3Mock {
 	 * @param params {Bucket: bucketName}. Name of bucket to delete
 	 * @param callback
 	 * @returns void
-	 */// @ts-expect-error
-	deleteBucket (params, callback) {
+	 */
+	deleteBucket (params: any, callback: Cb) {
 		var err = null
 
 		if (typeof params === 'object' && params !== null) {
@@ -538,19 +543,18 @@ class S3Mock {
 		var opts = _.extend({}, this.defaultOptions, applyBasePath(params, this.config))
 
 		if (err !== null) {
-			callback(err)
+			callback(err, null)
 		}
 
 		var bucketPath = opts.basePath || ''
 		bucketPath += opts.Bucket
 
 		fs.remove(bucketPath, function (err) {
-			return callback(err)
+			return callback(err, null)
 		})
 	}
 
-	// @ts-expect-error
-	putObject (search, callback) {
+	putObject (search: any, callback: Cb) {
 		search = _.extend({}, this.defaultOptions, applyBasePath(search, this.config))
 
 		if (search.Metadata) {
@@ -634,14 +638,12 @@ class S3Mock {
 		}
 	}
 
-	// @ts-expect-error
-	getObjectTagging (search, callback) {
+	getObjectTagging (search: any, callback: Cb) {
 		var self = this
 
-		// @ts-expect-error
-		this.headObject(search, function (err, props) {
+		this.headObject(search, function (err, _props) {
 			if (err) {
-				return callback(err)
+				return callback(err, null)
 			}
 			else {
 				return callback(null, {
@@ -652,18 +654,16 @@ class S3Mock {
 		})
 	}
 
-	// @ts-expect-error
-	putObjectTagging (search, callback) {
+	putObjectTagging (search: any, callback: Cb) {
 		var self = this
 
 		if (!search.Tagging || !search.Tagging.TagSet) {
-			return callback(new Error('Tagging.TagSet required'))
+			return callback(new Error('Tagging.TagSet required'), null)
 		}
 
-		// @ts-expect-error
 		this.headObject(search, function (err, props) {
 			if (err) {
-				return callback(err)
+				return callback(err, null)
 			}
 			else {
 				self.objectTaggingDictionary[search.Key] = search.Tagging.TagSet
@@ -675,8 +675,7 @@ class S3Mock {
 		})
 	}
 
-	// @ts-expect-error
-	upload (search, options, callback) {
+	upload (search: any, options: any, callback: Cb) {
 		if (typeof options === 'function' && callback === undefined) {
 			callback = options
 			options = null
@@ -689,7 +688,8 @@ class S3Mock {
 						'Tags must be specified as an array; ' +
 						typeof options.tags +
 						' provided'
-					)
+					),
+					null
 				)
 			}
 		}
@@ -710,7 +710,7 @@ class S3Mock {
 						}, // @ts-expect-error
 						function (err) {
 							if (err) {
-								return callback(err)
+								return callback(err, null)
 							}
 
 							return callback(null, data)
