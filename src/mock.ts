@@ -12,7 +12,6 @@ import crypto from 'crypto'
 import path from 'path'
 import buffer from 'buffer'
 import Promise from 'bluebird'
-import { AWSError } from 'aws-sdk/lib/error'
 import {
 	CopyObjectOutput,
 	CopyObjectRequest,
@@ -38,6 +37,7 @@ import {
 	PutObjectTaggingOutput,
 	PutObjectTaggingRequest
 } from 'aws-sdk/clients/s3'
+import { AWSError } from 'aws-sdk/lib/core'
 
 type Config = {
 	basePath?: string;
