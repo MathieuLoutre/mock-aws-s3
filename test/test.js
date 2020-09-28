@@ -1,7 +1,7 @@
 'use strict'
 
 var expect = require('chai').expect
-var AWS = require('../')
+var AWS = require('../lib/index')
 var fs = require('fs')
 var streamBuffers = require('stream-buffers')
 var path = require('path')
@@ -124,10 +124,12 @@ describe('S3', function () {
 	})
 
 	it('should list files starting a marker with a partial filename', function (done) {
-		s3.listObjects({ Prefix: '',
+		s3.listObjects({
+			Prefix: '',
 			Bucket: path.join(__dirname, '/local/otters'),
 			Marker: 'mix/yay copy 10',
-			Delimiter: '/' }, function (err, data) {
+			Delimiter: '/'
+		}, function (err, data) {
 			expect(err).to.equal(null)
 			expect(data.Contents.length).to.equal(1000)
 			expect(data.Contents[0].ETag).to.exist
@@ -295,10 +297,12 @@ describe('S3', function () {
 	})
 
 	it('should list files starting a marker with a partial filename (listV2)', function (done) {
-		s3.listObjectsV2({ Prefix: '',
+		s3.listObjectsV2({
+			Prefix: '',
 			Bucket: path.join(__dirname, '/local/otters'),
 			StartAfter: 'mix/yay copy 10',
-			Delimiter: '/' }, function (err, data) {
+			Delimiter: '/'
+		}, function (err, data) {
 			expect(err).to.equal(null)
 			expect(data.Contents.length).to.equal(1000)
 			expect(data.Contents[0].ETag).to.exist
@@ -672,7 +676,7 @@ describe('S3', function () {
 		var bucket = path.join(__dirname, '/local/tags')
 		var tags = [{ Key: 'foo', Value: 'bar' }]
 
-		s3.upload({ Key: key, Bucket: bucket, Body: 'stuff' }, { tags: tags }, function (err, data) {
+		s3.upload({ Key: key, Bucket: bucket, Body: 'stuff' }, { tags: tags }, function (err, _data) {
 			expect(err).to.be.null
 
 			s3.getObjectTagging({ Key: key, Bucket: bucket }, function (err, data) {
@@ -710,7 +714,8 @@ describe('S3', function () {
 	})
 
 	it('should fail to put object tags against a non-existing object', function (done) {
-		s3.putObjectTagging({ Key: 'does-not-exist',
+		s3.putObjectTagging({
+			Key: 'does-not-exist',
 			Bucket: path.join(__dirname, '/local/otters'),
 			Tagging: { TagSet: [] }
 		}, function (err, data) {
@@ -721,7 +726,8 @@ describe('S3', function () {
 	})
 
 	it('should put object tags against an existing object', function (done) {
-		s3.putObjectTagging({ Key: 'animal.txt',
+		s3.putObjectTagging({
+			Key: 'animal.txt',
 			Bucket: path.join(__dirname, '/local/otters'),
 			Tagging: { TagSet: [{ Key: 'type', Value: 'otter' }] }
 		}, function (err, data) {

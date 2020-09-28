@@ -105,10 +105,12 @@ describe('S3 with baseBath', function () {
 	})
 
 	it('should list files starting a marker with a partial filename', function (done) {
-		s3.listObjects({ Prefix: '',
+		s3.listObjects({
+			Prefix: '',
 			Bucket: 'otters',
 			Marker: 'mix/yay copy 10',
-			Delimiter: '/' }, function (err, data) {
+			Delimiter: '/'
+		}, function (err, data) {
 			expect(err).to.equal(null)
 			expect(data.Contents.length).to.equal(1000)
 			expect(data.Contents[0].ETag).to.exist

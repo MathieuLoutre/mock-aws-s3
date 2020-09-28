@@ -25,8 +25,10 @@
   },
   "scripts": {
     "test": "grunt",
-    "lint": "eslint '**/*.js' --ignore-pattern node_modules/",
-    "lint-fix": "eslint '**/*.js' --ignore-pattern node_modules/ --fix"
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "lint": "eslint 'src/**/*.ts' --ignore-pattern node_modules/",
+    "lint-fix": "eslint src/**/*.ts' --ignore-pattern node_modules/ --fix"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
@@ -34,21 +36,28 @@
     "underscore": "1.8.3"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.32",
+    "@types/fs-extra": "^9.0.1",
+    "@types/node": "^14.11.2",
+    "@types/underscore": "^1.10.24",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
     "chai": "~1.7.2",
-    "eslint": "^5.9.0",
-    "eslint-config-standard": "^12.0.0",
+    "eslint": "^7.10.0",
+    "eslint-config-standard": "^14.1.1",
     "eslint-plugin-chai-friendly": "^0.5.0",
-    "eslint-plugin-import": "^2.20.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "grunt": "^1.0.4",
     "grunt-contrib-clean": "~2.0.0",
     "grunt-contrib-copy": "~1.0.0",
     "grunt-contrib-jshint": "^2.1.0",
     "grunt-mocha-test": "^0.13.3",
     "mocha": "^7.0.1",
-    "stream-buffers": "^3.0.2"
+    "stream-buffers": "^3.0.2",
+    "typescript": "^4.0.3"
   },
   "keywords": [
     "aws",
