@@ -18,3 +18,4 @@ yarn.lock
 /test/local
 
 .DS_Store
+.idea/
