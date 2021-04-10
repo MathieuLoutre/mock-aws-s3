@@ -23,6 +23,7 @@ It uses a directory to mock a bucket and its content.
 If you'd like to see some more features or you have some suggestions, feel free to use the issues or submit a pull request.
 
 ## Release History
+* 2021-04-10   v4.0.2   Update dependencies, remove extra log and use proper path concat
 * 2020-01-30   v4.0.0   Fix promises and update packages with various contributions.
 * 2018-06-16   v3.0.0   Contributions from @benedict-wellard and @telenor-digital-asia adding support for promises and deleteBucket
 * 2017-08-11   v2.6.0   Contributions from @pamelafox and @fkleon adding support for listObjectsV2, tagging and more useful debug info returned
