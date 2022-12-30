@@ -47,7 +47,7 @@
     "grunt-contrib-copy": "~1.0.0",
     "grunt-contrib-jshint": "^2.1.0",
     "grunt-mocha-test": "^0.13.3",
-    "mocha": "^7.0.1",
+    "mocha": "^10.2.0",
     "stream-buffers": "^3.0.2"
   },
   "keywords": [
